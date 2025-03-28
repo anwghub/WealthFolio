@@ -1,4 +1,3 @@
-import uuid
 from flask import Flask, redirect, url_for, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
@@ -7,14 +6,19 @@ from urllib.parse import urlencode
 from Queue_manager import request_queue_manager
 from config import Config
 from models import db
-from routes import auth_bp, user_bp,test_bp,transactions_bp,bill_bp,reminders_bp,goals_bp,budget_bp,notifications_bp,receipts_bp,ml_bp
 from flask_mysqldb import MySQL
 from flask_cors import CORS
 
+# Import blueprints 
+from routes.auth import auth_bp
+from routes.user import user_bp
+from routes.test import test_bp
+from routes.transactions import transactions_bp
+# Other imports...
 
 app = Flask(__name__)
 app.config.from_object(Config)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 db.init_app(app)
 jwt = JWTManager(app)
@@ -24,11 +28,16 @@ mysql = MySQL(app)
 def home():
     return jsonify({"message": "Hello Users"}), 200
 
-# Register Blueprints
+# Test route for debugging
+@app.route('/test-transactions')
+def test_transactions():
+    return jsonify({"message": "Test endpoint is working!"}), 200
+
+# Register Blueprints - ensure names match exactly
 app.register_blueprint(auth_bp, url_prefix='/auth_redirect')
-# app.register_blueprint(user_bp, url_prefix='/user')
+app.register_blueprint(user_bp, url_prefix='/user')
 app.register_blueprint(test_bp, url_prefix='/testing')
-# app.register_blueprint(transactions_bp, url_prefix='/transactions')
+app.register_blueprint(transactions_bp, url_prefix='/transactions')
 # app.register_blueprint(bill_bp, url_prefix='/bills')
 # app.register_blueprint(reminders_bp, url_prefix='/reminders')
 # app.register_blueprint(goals_bp, url_prefix='/goals')
@@ -53,4 +62,4 @@ def auth_redirect():
 #     return jsonify({"message": "This will redirect to user update"}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
