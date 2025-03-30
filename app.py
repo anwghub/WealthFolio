@@ -8,6 +8,7 @@ from config import Config
 from models import db
 from flask_mysqldb import MySQL
 from flask_cors import CORS
+from routes.categories import categories_bp
 
 # Import blueprints 
 from routes.auth import auth_bp
@@ -45,6 +46,7 @@ app.register_blueprint(transactions_bp, url_prefix='/transactions')
 # app.register_blueprint(notifications_bp, url_prefix='/notifications')
 # app.register_blueprint(receipts_bp, url_prefix='/receipts')
 # app.register_blueprint(ml_bp, url_prefix='/ml')
+app.register_blueprint(categories_bp, url_prefix='/categories')
 
 @app.route('/queue', methods=['POST'])
 def queue():
