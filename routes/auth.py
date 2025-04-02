@@ -56,6 +56,7 @@ def register():
 @verify_client_credentials
 def signup():
     data = request.get_json()
+    print("Received Data:", data)
     if not data:
         return jsonify({"message": "No data provided"}), 400
 
@@ -155,7 +156,7 @@ def signin():
     if not existing_user or not Password.verify_password(existing_user.PasswordHash, PasswordHash):
         return jsonify({"message": "Invalid credentials"}), 401
 
-    access_token = create_access_token(identity=existing_user.UserID)
+    access_token = create_access_token(identity=str(existing_user.UserID))
 
     new_token = OAuth2Token(
         client_id=client_id,
